@@ -1,198 +1,206 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="format-detection" content="telephone=no">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="format-detection" content="telephone=no">
 
-    <title>Bible Reading Plan</title>
+        <title>Bible Reading Plan</title>
 
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link href="/css/style.css" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Bible Reading Plan <small class="info"></small></h1>
-    </div>
-    <div class="copyright">Made with <b>&lt;3</b> by <a href="http://www.farmsoftstudios.com" target="_blank">FarmSoft Studios</a>.</div>
-    <script src='//cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
-    <script src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
-    <script type="text/javascript">
-      function guid() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-          var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-          return v.toString(16);
-        });
-      }
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <link href="/css/style.css" rel="stylesheet" type="text/css">
+        <link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <div class="container">
+          <h1>Bible Reading Plan <small class="info"></small></h1>
+        </div>
+        <div class="copyright">Made with <b>&lt;3</b> by <a href="http://www.farmsoftstudios.com" target="_blank">FarmSoft Studios</a>.</div>
 
-    	var bible = {
-  			"Old Testament": {
-  				"Genesis" : 50,
-  				"Exodus" : 40,
-  				"Leviticus" : 27,
-  				"Numbers" : 36,
-  				"Deuteronomy" : 34,
-  				"Joshua" : 24,
-  				"Judges" : 21,
-  				"Ruth" : 4,
-  				"1 Samuel" : 31,
-  				"2 Samuel" : 24,
-  				"1 Kings" : 22,
-  				"2 Kings" : 25,
-  				"1 Chronicles" : 29,
-  				"2 Chronicles" : 36,
-  				"Ezra" : 10,
-  				"Nehemiah" : 13,
-  				"Esther" : 10,
-  				"Job" : 42,
-  				"Psalms" : 150,
-  				"Proverbs" : 31,
-  				"Ecclesiastes" : 12,
-  				"Song of Songs" : 8,
-  				"Isaiah" : 66,
-  				"Jeremiah" : 52,
-  				"Lamentations" : 5,
-  				"Ezekiel" : 48,
-  				"Daniel" : 12,
-  				"Hosea" : 14,
-  				"Joel" : 3,
-  				"Amos" : 9,
-  				"Obadiah" : 1,
-  				"Jonah" : 4,
-  				"Micah" : 7,
-  				"Nahum" : 3,
-  				"Habakkuk" : 3,
-  				"Zephaniah" : 3,
-  				"Haggai" : 2,
-  				"Zechariah" : 14,
-  				"Malachi" : 4
-  			},
-  			"New Testament": {
-  				"Matthew" : 28,
-  				"Mark" : 16,
-  				"Luke" : 24,
-  				"John" : 21,
-  				"Acts" : 28,
-  				"Romans" : 16,
-  				"1 Corinthians" : 16,
-  				"2 Corinthians" : 13,
-  				"Galatians" : 6,
-  				"Ephesians" : 6,
-  				"Philippians" : 4,
-  				"Colossians" : 4,
-  				"1 Thessalonians" : 5,
-  				"2 Thessalonians" : 3,
-  				"1 Timothy" : 6,
-  				"2 Timothy" : 4,
-  				"Titus" : 3,
-  				"Philemon" : 1,
-  				"Hebrews" : 13,
-  				"James" : 5,
-  				"1 Peter" : 5,
-  				"2 Peter" : 3,
-  				"1 John" : 5,
-  				"2 John" : 1,
-  				"3 John" : 1,
-  				"Jude" : 1,
-  				"Revelation" : 22
-  			},
-  		}
+        <script src="//www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+        <script src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+        <script>
+            // Initialize Firebase
+            var config = {
+                apiKey: "AIzaSyB7opQS4JAFI5j6DilDJaiMWGH5P524Npg",
+                authDomain: "biblereading.firebaseapp.com",
+                databaseURL: "https://biblereading.firebaseio.com",
+                storageBucket: "firebase-biblereading.appspot.com",
+                messagingSenderId: "908214073476"
+            };
+            firebase.initializeApp(config);
+            var database = firebase.database();
 
-			var ot_count = 929;
-			var nt_count = 260;
-			var total_count = ot_count + nt_count;
-
-	    $(function() {
-	    	var html = "";
-        var guid_hash = location.hash.substring(1);
-
-        if (guid_hash.length < 1) {
-          guid_hash = guid();
-          location.hash = guid_hash;
-        }
-
-        var myDataRef = new Firebase('https://biblereading.firebaseio.com/'+guid_hash+'/');
-
-	    	for (sections in bible) {
-  	    	var numberOfChapters, i = 1;
-  	    	var id = '';
-  	    	var nl = "\n";
-
-  	    	html += '<div class="section"><h2>'+sections+'</h2>';
-
-  	    	for (book in bible[sections]) {
-    	    	numberOfChapters = bible[sections][book]
-    	    	id = book.replace(' ', '').toLowerCase();
-	    	    html += '<div class="row">'+nl+'<h3>'+book+'</h3>';
-	    	    html += '<div id="'+id+'" class="chapters">';
-
-  	    	  for (i=1; i<=numberOfChapters; i++) {
-    	    	  html += '<div id="'+id+i+'" data-book="'+id+'" data-chapter="'+i+'" class="chapter">'+i+'</div>'+nl;
-  	    	  }
-
-  	    	  html += "</div></div>"+nl+'<div class="row"></div>';
-	    	  }
-
-	    	  html += "</div></div>";
-
-	    	}
-
-	    	$('.container').append(html);
-	    	loadSaved();
-
-
-	    	$('.chapter').click(function(){
-  	    	$(this).toggleClass("read");
-  	    	saveRead($(this));
-  	    	calculateRead()
-	    	});
-
-	    	function saveRead(element){
-          var chapter = element.data("chapter")
-          var book = element.data("book")
-  	    	var id = String(book) + String(chapter)
-          var read = new Firebase('https://biblereading.firebaseio.com/'+guid_hash+'/'+book+'/'+chapter+'/');
-    	    if (element.hasClass("read")) {
-      	    read.set({read: 1});
-      	  } else {
-        	  read.set({});
-      	  }
-    	  }
-
-        function loadSaved(){
-          var ref = new Firebase('https://biblereading.firebaseio.com/'+guid_hash);
-          ref.on("value", function(snapshot) {
-            var data = snapshot.val();
-            $('.chapter').removeClass('read');
-
-            for(var key in data) {
-               if (data.hasOwnProperty(key)) {
-                  var val = data[key];
-                  for(var key2 in val) {
-                    if (val.hasOwnProperty(key2)) {
-                      $('.chapters').find("[data-book='" + key + "'][data-chapter='" + key2 + "']").addClass("read");
-                    }
-                  }
-               }
+            function guid() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+                    return v.toString(16);
+                });
             }
-            calculateRead();
-          }, function (errorObject) {
-            console.log("The read failed: " + errorObject.code);
-          });
-	    	}
 
-	    	function calculateRead(){
-    	    var totalRead = (($('.read').length / total_count) * 100);
-    	    if(totalRead < 100 && totalRead > 0){
-      	    $(".info").html("(You have read "+totalRead.toPrecision(2)+"% of the Bible.)")
-          } else {
-            $(".info").html("");
-          }
-	    	}
+            var bible = {
+                "Old Testament": {
+                    "Genesis" : 50,
+                    "Exodus" : 40,
+                    "Leviticus" : 27,
+                    "Numbers" : 36,
+                    "Deuteronomy" : 34,
+                    "Joshua" : 24,
+                    "Judges" : 21,
+                    "Ruth" : 4,
+                    "1 Samuel" : 31,
+                    "2 Samuel" : 24,
+                    "1 Kings" : 22,
+                    "2 Kings" : 25,
+                    "1 Chronicles" : 29,
+                    "2 Chronicles" : 36,
+                    "Ezra" : 10,
+                    "Nehemiah" : 13,
+                    "Esther" : 10,
+                    "Job" : 42,
+                    "Psalms" : 150,
+                    "Proverbs" : 31,
+                    "Ecclesiastes" : 12,
+                    "Song of Songs" : 8,
+                    "Isaiah" : 66,
+                    "Jeremiah" : 52,
+                    "Lamentations" : 5,
+                    "Ezekiel" : 48,
+                    "Daniel" : 12,
+                    "Hosea" : 14,
+                    "Joel" : 3,
+                    "Amos" : 9,
+                    "Obadiah" : 1,
+                    "Jonah" : 4,
+                    "Micah" : 7,
+                    "Nahum" : 3,
+                    "Habakkuk" : 3,
+                    "Zephaniah" : 3,
+                    "Haggai" : 2,
+                    "Zechariah" : 14,
+                    "Malachi" : 4
+                },
+                "New Testament": {
+                    "Matthew" : 28,
+                    "Mark" : 16,
+                    "Luke" : 24,
+                    "John" : 21,
+                    "Acts" : 28,
+                    "Romans" : 16,
+                    "1 Corinthians" : 16,
+                    "2 Corinthians" : 13,
+                    "Galatians" : 6,
+                    "Ephesians" : 6,
+                    "Philippians" : 4,
+                    "Colossians" : 4,
+                    "1 Thessalonians" : 5,
+                    "2 Thessalonians" : 3,
+                    "1 Timothy" : 6,
+                    "2 Timothy" : 4,
+                    "Titus" : 3,
+                    "Philemon" : 1,
+                    "Hebrews" : 13,
+                    "James" : 5,
+                    "1 Peter" : 5,
+                    "2 Peter" : 3,
+                    "1 John" : 5,
+                    "2 John" : 1,
+                    "3 John" : 1,
+                    "Jude" : 1,
+                    "Revelation" : 22
+                },
+            }
 
-	    });
-    </script>
-  </body>
+            var ot_count = 929;
+            var nt_count = 260;
+            var total_count = ot_count + nt_count;
+
+            $(function() {
+                var html = "";
+                var guid_hash = location.hash.substring(1);
+
+                if (guid_hash.length < 1) {
+                  guid_hash = guid();
+                  location.hash = guid_hash;
+                }
+
+                for (sections in bible) {
+                    var numberOfChapters, i = 1;
+                    var id = '';
+                    var nl = "\n";
+
+                    html += '<div class="section"><h2>'+sections+'</h2>';
+
+                    for (book in bible[sections]) {
+                        numberOfChapters = bible[sections][book]
+                        id = book.replace(' ', '').toLowerCase();
+                        html += '<div class="row">'+nl+'<h3>'+book+'</h3>';
+                        html += '<div id="'+id+'" class="chapters">';
+
+                        for (i=1; i<=numberOfChapters; i++) {
+                            html += '<div id="'+id+i+'" data-book="'+id+'" data-chapter="'+i+'" class="chapter">'+i+'</div>'+nl;
+                        }
+
+                        html += "</div></div>"+nl+'<div class="row"></div>';
+                    }
+
+                    html += "</div></div>";
+                }
+
+                $('.container').append(html);
+                loadSaved();
+
+
+                $('.chapter').click(function(){
+                    $(this).toggleClass("read");
+                    saveRead($(this));
+                    calculateRead()
+                });
+
+                function saveRead(element){
+                    var chapter = element.data("chapter")
+                    var book = element.data("book")
+                    var id = String(book) + String(chapter)
+                    var read = firebase.database().ref('users/'+guid_hash+'/'+book+'/'+chapter+'/');
+                    if (element.hasClass("read")) {
+                        read.set({read: 1});
+                    } else {
+                        read.set({});
+                    }
+                }
+
+                function loadSaved() {
+                    var ref = firebase.database().ref('users/'+guid_hash);
+                    ref.on("value", function(snapshot) {
+                        var data = snapshot.val();
+                        $('.chapter').removeClass('read');
+
+                        for(var key in data) {
+                           if (data.hasOwnProperty(key)) {
+                              var val = data[key];
+                              for(var key2 in val) {
+                                if (val.hasOwnProperty(key2)) {
+                                  $('.chapters').find("[data-book='" + key + "'][data-chapter='" + key2 + "']").addClass("read");
+                                }
+                              }
+                           }
+                        }
+                        calculateRead();
+                    }, function (errorObject) {
+                        console.log("The read failed: " + errorObject.code);
+                    });
+                }
+
+                function calculateRead(){
+                    var totalRead = (($('.read').length / total_count) * 100);
+                    if(totalRead < 100 && totalRead > 0){
+                        $(".info").html("(You have read "+totalRead.toPrecision(2)+"% of the Bible.)")
+                    } else {
+                        $(".info").html("");
+                    }
+                }
+            });
+        </script>
+    </body>
 </html>
