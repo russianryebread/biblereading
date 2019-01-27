@@ -42,7 +42,16 @@ html {
     border: 2px solid #57b7ff;
     color: white;
     font-weight: bold;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
 }
+
+.chapter.read.sunday    { background-color: #0592ff; border: 2px solid #0592ff; }
+.chapter.read.monday    { background-color: #1c9dff; border: 2px solid #1c9dff; }
+.chapter.read.tuesday   { background-color: #209fff; border: 2px solid #209fff; }
+.chapter.read.wednesday { background-color: #31a6ff; border: 2px solid #31a6ff; }
+.chapter.read.thursday  { background-color: #57b7ff; border: 2px solid #57b7ff; }
+.chapter.read.friday    { background-color: #8bcbfc; border: 2px solid #8bcbfc; }
+.chapter.read.saturday  { background-color: #c3e5ff; border: 2px solid #c3e5ff; }
 
 h1 small {
     font-size: 65%;

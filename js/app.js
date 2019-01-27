@@ -1,5 +1,8 @@
 const READ_KEY = 'read'
 const BIBLE_JSON = 'js/bible.json'
+const DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+const TODAY = new Date().getDay()
+
 
 firebase.initializeApp({
     apiKey: "AIzaSyB7opQS4JAFI5j6DilDJaiMWGH5P524Npg",
@@ -51,7 +54,7 @@ const app = new Vue({
             let book = element.target.dataset.book
             let read = firebase.database().ref(`${this.guidHash}/${book}/${chapter}/`);
             if (element.target.classList.contains(READ_KEY)) {
-                read.set({ read: 1 })
+                read.set({ read: DAYS[TODAY], date: new Date() })
                 this.readCount++
             } else {
                 read.set({})
@@ -61,6 +64,7 @@ const app = new Vue({
         loadSaved() {
             let ref = firebase.database().ref(this.guidHash)
             ref.on("value", (snapshot) => {
+                let count = 0
                 let data = snapshot.val()
                 for (let book in data) {
                     if (data.hasOwnProperty(book)) {
@@ -68,13 +72,14 @@ const app = new Vue({
                             if (data[book].hasOwnProperty(chapter)) {
                                 let matches = document.querySelectorAll(`[data-book='${book}'][data-chapter='${chapter}']`)
                                 if(matches.length) {
-                                    matches[0].classList.add(READ_KEY)
-                                    this.readCount++
+                                    matches[0].classList.add(READ_KEY, data[book][chapter].read)
+                                    count++
                                 }
                             }
                         }
                     }
                 }
+                this.readCount = count
             }, function (errorObject) {
                 console.log("The read failed: " + errorObject.code)
             });
