@@ -9,20 +9,19 @@
 </head>
 <body>
     <div id="app" class="container">
-        <h1>Bible Reading Plan <small>{{readAmount}}</small></h1>
-        <div class="section" v-for="(section, s_title) in bible">
-            <h2>{{s_title}}</h2>
-            <div class="row" v-for="(books, b_title) in section">
-                <h3>{{b_title}}</h3>
-                <div class="chapters" v-for="(i, book) in books">
-                    <div :data-book="b_title | lowercase | removespace" :data-chapter="i" class="chapter" @click="markRead">{{i}}</div>
+        <h1>Bible Reading Plan <small>{{percentageRead}}</small></h1>
+        <div class="section" v-for="(section, sectionTitle) in bible">
+            <h2>{{sectionTitle}}</h2>
+            <div class="row" v-for="(books, bookTitle) in section">
+                <h3>{{bookTitle}}</h3>
+                <div class="chapters" v-for="(chapter, book) in books">
+                    <div :data-book="bookTitle | lowercase | removespace" :data-chapter="chapter" class="chapter" @click="markRead">{{chapter}}</div>
                 </div>
-                <div class="row"></div>
+                <div class="clear"></div>
             </div>
         </div>
     </div>
     <div class="copyright">Made with <b>&lt;3</b> by <a href="http://hoshor.me" target="_blank">Ryan Hoshor</a>.</div>
-
     <script src="https://unpkg.com/vue@2.5.22/dist/vue.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.7.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.7.0/firebase-database.js"></script>

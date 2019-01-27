@@ -1,4 +1,5 @@
-var READ_KEY = 'read'
+const READ_KEY = 'read'
+const BIBLE_JSON = 'js/bible.json'
 
 firebase.initializeApp({
     apiKey: "AIzaSyB7opQS4JAFI5j6DilDJaiMWGH5P524Npg",
@@ -7,13 +8,13 @@ firebase.initializeApp({
     storageBucket: "firebase-biblereading.appspot.com",
 });
 
-var app = new Vue({
+const app = new Vue({
     el: '#app',
     data: {
         bible: {},
         OTCount: 929,
         NTCount: 260,
-        readAmount: ''
+        readCount: 0
     },
     computed: {
         totalCount() {
@@ -22,10 +23,14 @@ var app = new Vue({
         guidHash() {
             return location.hash.substring(1)
         },
+        percentageRead() {
+            let totalRead = ((this.readCount / this.totalCount) * 100)
+            return (totalRead < 100 && totalRead > 0) ? "(You have read " + totalRead.toPrecision(2) + "% of the Bible.)" : ''
+        },
     },
     mounted(){
         if(location.hash == '') { location.hash = this.guid() }
-        fetch('bible.json').then(r => r.json()).then((json) => {
+        fetch(BIBLE_JSON).then(r => r.json()).then((json) => {
             this.bible = json
             this.loadSaved()
         })
@@ -33,50 +38,46 @@ var app = new Vue({
     methods: {
         guid() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
+                let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8)
+                return v.toString(16)
+            })
         },
         markRead(element) {
             element.target.classList.toggle(READ_KEY)
-            this.saveRead(element);
-            this.updateReadAmount()
+            this.saveRead(element)
         },
         saveRead(element) {
-            var chapter = element.target.dataset.chapter
-            var book = element.target.dataset.book
-            var id = String(book) + String(chapter)
-            var read = firebase.database().ref(this.guidHash + '/' + book + '/' + chapter + '/');
+            let chapter = element.target.dataset.chapter
+            let book = element.target.dataset.book
+            let read = firebase.database().ref(`${this.guidHash}/${book}/${chapter}/`);
             if (element.target.classList.contains(READ_KEY)) {
-                read.set({ read: 1 });
+                read.set({ read: 1 })
+                this.readCount++
             } else {
                 read.set({})
+                this.readCount--
             }
         },
         loadSaved() {
-            if(!this.guidHash) { throw new Error("URL Hash not set!") }
-            
-            var ref = firebase.database().ref(this.guidHash);
+            let ref = firebase.database().ref(this.guidHash)
             ref.on("value", (snapshot) => {
-                var data = snapshot.val()
-                for (var book in data) {
+                let data = snapshot.val()
+                for (let book in data) {
                     if (data.hasOwnProperty(book)) {
-                        for (var chapter in data[book]) {
+                        for (let chapter in data[book]) {
                             if (data[book].hasOwnProperty(chapter)) {
-                                var matches = document.querySelectorAll(`[data-book='${book}'][data-chapter='${chapter}']`);
-                                if(matches.length) { matches[0].classList.add(READ_KEY) }
+                                let matches = document.querySelectorAll(`[data-book='${book}'][data-chapter='${chapter}']`)
+                                if(matches.length) {
+                                    matches[0].classList.add(READ_KEY)
+                                    this.readCount++
+                                }
                             }
                         }
                     }
                 }
-                this.updateReadAmount()
             }, function (errorObject) {
                 console.log("The read failed: " + errorObject.code)
             });
-        },
-        updateReadAmount() {
-            var totalRead = ((document.getElementsByClassName(READ_KEY).length / this.totalCount) * 100)
-            this.readAmount = (totalRead < 100 && totalRead > 0) ? "(You have read " + totalRead.toPrecision(2) + "% of the Bible.)" : ''
         },
     },
     filters: {
