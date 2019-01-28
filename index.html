@@ -1,15 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" manifest="appcache.manifest">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+
     <title>Bible Reading Tracker</title>
+    
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
     <link href="https://fonts.googleapis.com/css?family=Alegreya" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
     <div id="app" class="container">
-        <h1>Bible Reading Plan <small>{{percentageRead}}</small></h1>
+        <h1>Bible Reading Plan</h1>
+        <div class="percentageRead">{{percentageRead}}</div>
         <div class="section" v-for="(section, sectionTitle) in bible">
             <h2>{{sectionTitle}}</h2>
             <div class="row" v-for="(books, bookTitle) in section">
