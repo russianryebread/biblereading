@@ -54,7 +54,7 @@ const app = new Vue({
             let book = element.target.dataset.book
             let read = firebase.database().ref(`${this.guidHash}/${book}/${chapter}/`);
             if (element.target.classList.contains(READ_KEY)) {
-                read.set({ read: DAYS[TODAY], date: new Date() })
+                read.set({ read: DAYS[TODAY], date: new Date().toISOString() })
                 this.readCount++
             } else {
                 read.set({})
