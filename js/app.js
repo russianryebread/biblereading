@@ -1,7 +1,6 @@
 const READ_KEY = 'read'
 const BIBLE_JSON = 'js/bible.json'
 const DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-const TODAY = new Date().getDay()
 
 
 firebase.initializeApp({
@@ -54,7 +53,8 @@ const app = new Vue({
             let book = element.target.dataset.book
             let read = firebase.database().ref(`${this.guidHash}/${book}/${chapter}/`);
             if (element.target.classList.contains(READ_KEY)) {
-                read.set({ read: DAYS[TODAY], date: new Date().toISOString() })
+                let now = new Date()
+                read.set({ read: DAYS[now.getDay()], date: now.toISOString() })
                 this.readCount++
             } else {
                 read.set({})
